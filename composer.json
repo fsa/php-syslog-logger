@@ -1,0 +1,21 @@
+{
+    "name": "fsa/syslog-logger",
+    "description": "Syslog logger",
+    "type": "library",
+    "authors": [
+        {
+            "name": "Sergei Fedotov",
+            "email": "fsa@tavda.info"
+        }
+    ],
+    "license": "GPL-3.0-or-later",
+    "autoload": {
+        "psr-4": {
+            "SyslogLogger\\": "src/"
+        }
+    },
+    "require": {
+        "php": "^8.1",
+        "psr/log": "^3.0"
+    }
+}
