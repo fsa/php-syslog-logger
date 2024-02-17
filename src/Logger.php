@@ -9,52 +9,52 @@ class Logger implements LoggerInterface
 {
     public function __construct(string $prefix)
     {
-        openlog($prefix, LOG_PID | LOG_PERROR, LOG_LOCAL0);
+        openlog($prefix, LOG_PID | LOG_ODELAY, LOG_USER);
     }
 
     public function emergency(string|\Stringable $message, array $context = []): void
     {
-        syslog(LOG_EMERG, $this->getMessage($message, $context));
+        $this->syslog(LOG_EMERG, $message, $context);
     }
 
     public function alert(string|\Stringable $message, array $context = []): void
     {
-        syslog(LOG_ALERT, $this->getMessage($message, $context));
+        $this->syslog(LOG_ALERT, $message, $context);
     }
 
     public function critical(string|\Stringable $message, array $context = []): void
     {
-        syslog(LOG_CRIT, $this->getMessage($message, $context));
+        $this->syslog(LOG_CRIT, $message, $context);
     }
 
     public function error(string|\Stringable $message, array $context = []): void
     {
-        syslog(LOG_ERR, $this->getMessage($message, $context));
+        $this->syslog(LOG_ERR, $message, $context);
     }
 
     public function warning(string|\Stringable $message, array $context = []): void
     {
-        syslog(LOG_WARNING, $this->getMessage($message, $context));
+        $this->syslog(LOG_WARNING, $message, $context);
     }
 
     public function notice(string|\Stringable $message, array $context = []): void
     {
-        syslog(LOG_NOTICE, $this->getMessage($message, $context));
+        $this->syslog(LOG_NOTICE, $message, $context);
     }
 
     public function info(string|\Stringable $message, array $context = []): void
     {
-        syslog(LOG_INFO, $this->getMessage($message, $context));
+        $this->syslog(LOG_INFO, $message, $context);
     }
 
     public function debug(string|\Stringable $message, array $context = []): void
     {
-        syslog(LOG_DEBUG, $this->getMessage($message, $context));
+        $this->syslog(LOG_DEBUG, $message, $context);
     }
 
     public function log($level, string|\Stringable $message, array $context = []): void
     {
-        syslog(
+        $this->syslog(
             match ($level) {
                 LogLevel::EMERGENCY => LOG_EMERG,
                 LogLevel::ALERT => LOG_ALERT,
@@ -65,12 +65,13 @@ class Logger implements LoggerInterface
                 LogLevel::INFO => LOG_INFO,
                 LogLevel::DEBUG => LOG_DEBUG
             },
-            $this->getMessage($message, $context)
+            $message,
+            $context
         );
     }
 
-    private function getMessage(string|\Stringable $message, array $context): string
+    private function syslog(int $priority, string $message, array $context): void
     {
-        return empty($context) ? $message : $message . ' ' . json_encode($context, JSON_UNESCAPED_UNICODE);
+        syslog($priority, empty($context) ? $message : $message . ' ' . json_encode($context, JSON_UNESCAPED_UNICODE));
     }
 }
